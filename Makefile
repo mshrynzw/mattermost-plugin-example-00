@@ -1,5 +1,5 @@
 GO ?= $(shell command -v go 2> /dev/null)
-NPM ?= $(shell command -v npm 2> /dev/null)
+YARN ?= $(shell command -v yarn 2> /dev/null)
 CURL ?= $(shell command -v curl 2> /dev/null)
 MM_DEBUG ?=
 MANIFEST_FILE ?= plugin.json
@@ -41,8 +41,8 @@ check-style: webapp/node_modules
 	@echo Checking for style guide compliance
 
 ifneq ($(HAS_WEBAPP),)
-	cd webapp && npm run lint
-	cd webapp && npm run check-types
+	cd webapp && yarn run lint
+	cd webapp && yarn run check-types
 endif
 
 ifneq ($(HAS_SERVER),)
@@ -86,10 +86,10 @@ endif
 endif
 endif
 
-## Ensures NPM dependencies are installed without having to run this all the time.
+## Ensures YARN dependencies are installed without having to run this all the time.
 webapp/node_modules: $(wildcard webapp/package.json)
 ifneq ($(HAS_WEBAPP),)
-	cd webapp && $(NPM) install
+	cd webapp && $(YARN) install
 	touch $@
 endif
 
@@ -98,9 +98,9 @@ endif
 webapp: webapp/node_modules
 ifneq ($(HAS_WEBAPP),)
 ifeq ($(MM_DEBUG),)
-	cd webapp && $(NPM) run build;
+	cd webapp && $(YARN) run build;
 else
-	cd webapp && $(NPM) run debug;
+	cd webapp && $(YARN) run debug;
 endif
 endif
 
@@ -141,9 +141,9 @@ deploy: dist
 .PHONY: watch
 watch: server bundle
 ifeq ($(MM_DEBUG),)
-	cd webapp && $(NPM) run build:watch
+	cd webapp && $(YARN) run build:watch
 else
-	cd webapp && $(NPM) run debug:watch
+	cd webapp && $(YARN) run debug:watch
 endif
 
 ## Installs a previous built plugin with updated webpack assets to a server.
@@ -198,7 +198,7 @@ ifneq ($(HAS_SERVER),)
 	$(GO) test -v $(GO_TEST_FLAGS) ./server/...
 endif
 ifneq ($(HAS_WEBAPP),)
-	cd webapp && $(NPM) run test;
+	cd webapp && $(YARN) run test;
 endif
 ifneq ($(wildcard ./build/sync/plan/.),)
 	cd ./build/sync && $(GO) test -v $(GO_TEST_FLAGS) ./...
@@ -219,7 +219,7 @@ ifneq ($(HAS_WEBAPP),)
 ifeq ($(HAS_MM_UTILITIES),)
 	@echo "You must clone github.com/mattermost/mattermost-utilities repo in .. to use this command"
 else
-	cd $(MM_UTILITIES_DIR) && npm install && npm run babel && node mmjstool/build/index.js i18n extract-webapp --webapp-dir $(PWD)/webapp
+	cd $(MM_UTILITIES_DIR) && yarn install && yarn run babel && node mmjstool/build/index.js i18n extract-webapp --webapp-dir $(PWD)/webapp
 endif
 endif
 

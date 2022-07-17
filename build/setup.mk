@@ -39,7 +39,7 @@ PWD ?= $(shell pwd)
 
 # Ensure that npm (and thus node) is installed.
 ifneq ($(HAS_WEBAPP),)
-ifeq ($(NPM),)
+ifeq ($(YARN),)
     $(error "npm is not available: see https://www.npmjs.com/get-npm")
 endif
 endif

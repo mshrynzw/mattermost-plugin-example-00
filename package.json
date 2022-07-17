@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "enzyme-adapter-react-16": "^1.15.6",
+    "react-dom": "^18.2.0"
+  }
+}
