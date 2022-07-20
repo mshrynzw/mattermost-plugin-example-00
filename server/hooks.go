@@ -59,15 +59,6 @@ func routeTransit(start string, goal string) string {
 
 	body, _ := io.ReadAll(res.Body)
 	return string(body)
-
-	// JSONを構造体にエンコード
-	// station := "items.0.sections.0.name"
-	// stationName := gjson.Get(string(body), station).String()
-
-	// return (stationName)
-	// file, _ := os.Create("response.json")
-	// defer file.Close()
-	// json.NewEncoder(file).Encode(response)
 }
 
 func timeToString(t time.Time) string {
@@ -83,13 +74,13 @@ func stringToTime(str string) time.Time {
 func formatDateTime(src string) string {
 	rep1 := strings.Replace(src, "+09:00", "", -1)
 	rep2 := strings.Replace(rep1, "T", " ", -1)
-	time := stringToTime(rep2).Add(time.Hour * +9)
+	time := stringToTime(rep2)
 	return strings.Replace(timeToString(time), "timeToString", "", -1)
 }
 
 func formatText(json string) string {
 	buf := new(bytes.Buffer)
-	buf.WriteString(fmt.Sprint("NAVITIME\n"))
+	buf.WriteString(fmt.Sprint("## NAVITIME　乗換案内（現在時刻）\n"))
 	buf.WriteString(fmt.Sprint("```\n"))
 	for i := 0; ; i++ {
 		typeKey := "items.0.sections." + strconv.Itoa(i) + ".type"
@@ -99,15 +90,17 @@ func formatText(json string) string {
 			nameVal := gjson.Get(json, nameKey).String()
 			buf.WriteString(fmt.Sprintf("✚%s\n", nameVal))
 		} else if strings.Contains(tyepVal, "move") {
+			re := regexp.MustCompile("^\\S+ ")
+
 			fromTimeKey := "items.0.sections." + strconv.Itoa(i) + ".from_time"
 			formTimeVal := gjson.Get(json, fromTimeKey).String()
-			buf.WriteString(fmt.Sprintf("┃　　%s\n", formatDateTime(formTimeVal)))
+			buf.WriteString(fmt.Sprintf("┃%s\n", re.ReplaceAllString(formatDateTime(formTimeVal), "")))
 			lineNameKey := "items.0.sections." + strconv.Itoa(i) + ".line_name"
 			lineNameVal := gjson.Get(json, lineNameKey).String()
 			buf.WriteString(fmt.Sprintf("┃　%s\n", lineNameVal))
 			toTimeKey := "items.0.sections." + strconv.Itoa(i) + ".to_time"
 			toTimeVal := gjson.Get(json, toTimeKey).String()
-			buf.WriteString(fmt.Sprintf("┃　　%s\n", formatDateTime(toTimeVal)))
+			buf.WriteString(fmt.Sprintf("┃%s\n", re.ReplaceAllString(formatDateTime(toTimeVal), "")))
 		} else {
 			break
 		}
@@ -132,8 +125,5 @@ func (p *Plugin) MessageWillBePosted(c *plugin.Context, post *model.Post) (*mode
 		return post, ""
 	}
 
-	// p.API.LogDebug("Qiita link is detected.")
-	// post.Message = fmt.Sprintf("%s #Qiita", post.Message)
-	// post.Hashtags = fmt.Sprintf("%s #Qiita", post.Hashtags)
 	return post, ""
 }

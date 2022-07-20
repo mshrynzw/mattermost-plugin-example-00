@@ -1,12 +1,12 @@
 {
-    "id": "com.mshrynzw.example-00",
-    "name": "Plugin Starter Template",
-    "description": "This plugin serves as a starting point for writing a Mattermost plugin.",
+    "id": "com.mshrynzw.mattermost-plugin-join-navitime",
+    "name": "Join NAVITIME",
+    "description": "",
     "homepage_url": "https://github.com/mattermost/mattermost-plugin-starter-template",
     "support_url": "https://github.com/mattermost/mattermost-plugin-starter-template/issues",
     "release_notes_url": "https://github.com/mattermost/mattermost-plugin-starter-template/releases/tag/v0.1.0",
     "icon_path": "assets/starter-template-icon.svg",
-    "version": "0.1.0",
+    "version": "0.0.1",
     "min_server_version": "5.37.0",
     "server": {
         "executables": {
